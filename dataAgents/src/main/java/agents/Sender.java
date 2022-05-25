@@ -6,11 +6,13 @@ import agents.page.Ozon;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.RequestOptions;
 import utils.Config;
 
-import static utils.Config.getDataSet;
+import java.io.FileReader;
+import java.io.Reader;
 
 public class Sender extends Thread {
     private static volatile int threadsCount = 0;
@@ -18,6 +20,18 @@ public class Sender extends Thread {
 
     public Sender(JsonObject dataSet) {
         this.dataSet = dataSet;
+    }
+    private static final String dataSetPath = "src/main/resources/dataSet.json";
+
+    private static JsonArray getDataSet() {
+        JsonArray dataSet = new JsonArray();
+
+        try (Reader testDataFile = new FileReader(dataSetPath)) {
+            dataSet = JsonParser.parseReader(testDataFile).getAsJsonArray();
+        } catch (Exception e) {
+            System.out.println("Cannot load testData file " + e);
+        }
+        return dataSet;
     }
 
     public static void main(String[] args) throws InterruptedException {
