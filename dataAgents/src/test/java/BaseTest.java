@@ -40,7 +40,7 @@ public abstract class BaseTest {
     @BeforeSuite
     public void setupBrowser() {
         playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false).setSlowMo(1000));
+        Browser browser = playwright.webkit().launch(new BrowserType.LaunchOptions().setHeadless(true).setSlowMo(1000));
         context = browser.newContext();
         context.setDefaultTimeout(Integer.parseInt(Config.get("DEFAULT_TIMEOUT")));
     }

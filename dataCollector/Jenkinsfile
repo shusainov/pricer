@@ -25,7 +25,7 @@ pipeline {
         stage('deploy') {
             steps{
                 sh "docker rm --force dataCollector"
-                script(){docker.image('localhost:dataCollector').run('--name dataCollector -p 8081:8081')}
+                script(){docker.image('localhost:dataCollector').run('--name dataCollector -p 8081:8081 --restart=always')}
                 //sh "docker run --name dataCollector localhost:dataCollector"
                 echo "deploying"
             }

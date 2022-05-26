@@ -13,7 +13,6 @@ import utils.Config;
 
 import java.io.FileReader;
 import java.io.Reader;
-import java.nio.charset.Charset;
 
 public class Sender extends Thread {
     private static volatile int threadsCount = 0;
@@ -23,7 +22,7 @@ public class Sender extends Thread {
         this.dataSet = dataSet;
     }
 
-    private static final String dataSetPath = "src/main/resources/dataSet.json";
+    private static final String dataSetPath = "dataSet.json";
 
     private static JsonArray getDataSet() {
         JsonArray dataSet = new JsonArray();

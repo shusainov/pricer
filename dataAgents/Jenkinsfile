@@ -1,10 +1,32 @@
 pipeline {
-    agent { dockerfile true }
-
+    agent any
     stages {
-        stage('Test') {
+        stage('build') {
             steps {
-                sh 'mvn test'
+                cleanWs()
+                git branch: 'main', url: 'https://github.com/shusainov/pricer.git'
+                dir('dataAgents'){
+                    sh 'mvn package'
+                    sh 'cp -r /home/shusainov/dataAgents/config config'
+                }
+            }
+        }
+        stage('image') {
+            steps{
+                script(){
+                    dir('dataAgents'){
+                        def VERSION = readMavenPom().getVersion()
+                        echo "${VERSION}"
+                        sh "docker build --no-cache --tag localhost:dataAgents --build-arg VERSION=${VERSION} ."
+                    }
+                }
+            }
+        }
+        stage('deploy') {
+            steps{
+                sh "docker rm --force dataAgents"
+                script(){docker.image('localhost:dataAgents').run('--name dataAgents')}
+                echo "deploying"
             }
         }
     }
