@@ -18,7 +18,7 @@ import static org.testng.Assert.assertTrue;
 public class OzonPageTest extends BaseTest{
 
     @Override
-    protected String getConfigPath() {
+    protected String getTestSetPath() {
         return "src/test/resources/ozonTestDataArray.json";
     }
 

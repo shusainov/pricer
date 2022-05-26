@@ -13,6 +13,7 @@ import utils.Config;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 public class Sender extends Thread {
     private static volatile int threadsCount = 0;
@@ -21,6 +22,7 @@ public class Sender extends Thread {
     public Sender(JsonObject dataSet) {
         this.dataSet = dataSet;
     }
+
     private static final String dataSetPath = "src/main/resources/dataSet.json";
 
     private static JsonArray getDataSet() {
@@ -29,7 +31,7 @@ public class Sender extends Thread {
         try (Reader testDataFile = new FileReader(dataSetPath)) {
             dataSet = JsonParser.parseReader(testDataFile).getAsJsonArray();
         } catch (Exception e) {
-            System.out.println("Cannot load testData file " + e);
+            System.out.println("Cannot load dataSet file " + e);
         }
         return dataSet;
     }
@@ -55,29 +57,37 @@ public class Sender extends Thread {
             Browser browser = null;
             switch (Config.get("BROWSER")) {
                 case "webkit": {
-                    browser = playwright.webkit().launch(new BrowserType.LaunchOptions().setHeadless(Config.get("HEADLES").equals("true")).setSlowMo(1000));
+                    browser = playwright.webkit().launch(new BrowserType.LaunchOptions().setHeadless(Config.get("HEADLESS").equals("true")).setSlowMo(1000));
                     break;
                 }
                 case "chromium": {
-                    browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(Config.get("HEADLES").equals("true")).setSlowMo(1000));
+                    browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(Config.get("HEADLESS").equals("true")).setSlowMo(1000));
                     break;
                 }
                 case "firefox": {
-                    browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(Config.get("HEADLES").equals("true")).setSlowMo(1000));
+                    browser = playwright.firefox().launch(new BrowserType.LaunchOptions().setHeadless(Config.get("HEADLESS").equals("true")).setSlowMo(1000));
                     break;
                 }
             }
             BrowserContext context = browser.newContext();
             context.setDefaultTimeout(Integer.parseInt(Config.get("DEFAULT_TIMEOUT")));
             Page page = context.newPage();
-            BasePage basePage =null;
-            switch (dataSet.get("storeName").getAsString()){
-                case "Ozon":  basePage = new Ozon(page);
-                case "DNS" :  basePage = new DNS(page);
+            BasePage basePage = null;
+            switch (dataSet.get("storeName").getAsString()) {
+                case "Ozon": {
+                    basePage = new Ozon(page);
+                    break;
+                }
+                case "DNS": {
+                    basePage = new DNS(page);
+                    break;
+                }
             }
-
+            JsonObject firstElement = basePage.getFirstElement((JsonObject) dataSet);
+            basePage.closePage();
+            System.out.println("first element:" + firstElement);
             RequestOptions rs = RequestOptions.create()
-                    .setData(basePage.getFirstElement((JsonObject) dataSet))
+                    .setData(firstElement)
                     .setQueryParam("token", Config.get("SERVER_TOKEN"));
             APIResponse response = page.request().post(Config.get("SERVER_URL"), rs);
             System.out.println(response.text());
@@ -85,7 +95,6 @@ public class Sender extends Thread {
             System.out.println("Something wrong:" + e);
         } finally {
             threadsCount--;
-            //guthubtest
         }
 
     }

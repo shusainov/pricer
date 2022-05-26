@@ -18,13 +18,14 @@ public abstract class BaseTest {
     protected BrowserContext context;
     private static final Logger log = Logger.getLogger(BaseTest.class);
 
-    protected abstract String getConfigPath();
+    protected abstract String getTestSetPath();
     @DataProvider(parallel = false)
     public Object[][] getJsonElements() {
         JsonArray testSets = new JsonArray();
 
-        try (Reader testDataFile = new FileReader(getConfigPath())) {
+        try (Reader testDataFile = new FileReader(getTestSetPath())) {
             testSets = JsonParser.parseReader(testDataFile).getAsJsonArray();
+            System.out.println(testSets);
         } catch (Exception e) {
             log.debug("Cannot load testData file " + e);
         }

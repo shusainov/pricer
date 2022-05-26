@@ -69,8 +69,6 @@ public class Ozon extends BasePage {
         element.addProperty("price", getPricesFromRow(pricesDiv));
         element.addProperty("dataSetName", dataSet.get("dataSetName").getAsString());
         element.addProperty("storeName", dataSet.get("storeName").getAsString());
-
-        closePage();
         return element;
     }
 
@@ -92,8 +90,6 @@ public class Ozon extends BasePage {
             element.addProperty("dataSetName", dataSet.get("dataSetName").getAsString());
             result.add(element);
         }
-
-        closePage();
         return result;
     }
 }

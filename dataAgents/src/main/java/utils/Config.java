@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -16,10 +17,16 @@ public class Config {
     private static Properties PROPERTY;
 
     public static String get(String parameter) {
-        String configPath;
-        configPath = (System.getProperty("configFile") == null) ? "src/main/resources/config.properties" : System.getProperty("configFile");
         if (PROPERTY == null) {
             try {
+                String configPath =System.getProperty("config");
+                if (configPath==null||(!new File(configPath).isFile())) {
+                    configPath = "config/config.properties";
+                }
+
+                if (!new File(configPath).isFile()) {
+                    configPath = "src/main/resources/config.properties";
+                }
                 PROPERTY = new Properties();
                 PROPERTY.load(new FileInputStream(configPath));
             } catch (IOException e) {

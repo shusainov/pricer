@@ -9,7 +9,7 @@ import static org.testng.Assert.assertTrue;
 public class DNSPageTest extends BaseTest{
 
     @Override
-    protected String getConfigPath() {
+    protected String getTestSetPath() {
         return "src/test/resources/DNSTestDataArray.json";
     }
 
