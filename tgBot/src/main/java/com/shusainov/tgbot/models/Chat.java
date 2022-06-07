@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Chat {
-    int id;     //Integer	Уникальный идентификатор чата. Абсолютное значение не превышает 1e13
+    long id;     //Integer	Уникальный идентификатор чата. Абсолютное значение не превышает 1e13
     String type;//Enum	Тип чата: “private”, “group”, “supergroup” или “channel”
     //title	String	Опционально. Название, для каналов или групп
     //username	String	Опционально. Username, для чатов и некоторых каналов

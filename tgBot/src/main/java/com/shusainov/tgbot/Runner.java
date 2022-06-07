@@ -26,20 +26,23 @@ public class Runner {
             while (true) {
                 Update[] updates = tgAPI.getUpdates(lastID);
                 Arrays.stream(updates).forEach(x -> {
-                    int chatID = x.getMessage().getChat().getId();
+                    long chatID = x.getMessage().getChat().getId();
+                    System.out.println(chatID);
                     String incomingText = x.getMessage().getText();
+                    System.out.println(incomingText);
                     String resultText="Не понял тебя";
                     //TODO здесь происходит обработка данных, надо бы как то улучшить. Может получится слищком сложный метод
                     switch (incomingText) {
                         case "/help":
                         case "/start": {
                             resultText = "Bot для отслеживания цен в маркетах OZON, и тд.. \n" +
-                                    "напиши например 3060: покажет видяхи RTX 3060";
+                                    "напиши например 3060: покажет видяхи RTX 3060, \n" +
+                                    "в данный момент парсит Ozon: 3060,3070,3080, 6TB";
                             //TODO как то надо показать доступные DataSets
                             break;
                         }
                         default: {
-                            //TODO нужно както ограничить выгрузку
+                            //TODO нужно както ограничить выгрузку возвращает слишком много данных
                             StoreItem storeItem = repository.searchLastByLike(incomingText)
                             .stream().findFirst().orElse(new StoreItem());
                             if (storeItem!=null) {

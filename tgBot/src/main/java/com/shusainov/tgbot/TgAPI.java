@@ -92,11 +92,11 @@ public class TgAPI {
         }
     }
 
-    public Message sendMessage(int chat_id, String text) {
+    public Message sendMessage(long chat_id, String text) {
         String request = null;
         try {
             List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-            params.add(new BasicNameValuePair("chat_id", Integer.toString(chat_id)));
+            params.add(new BasicNameValuePair("chat_id", Long.toString(chat_id)));
             params.add(new BasicNameValuePair("text", text));
             request = Request.post(String.format(Config.get("URL"), token, "sendMessage"))
                     .bodyForm(params,Charset.forName("UTF-8"))
