@@ -7,7 +7,7 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/shusainov/pricer.git'
                 dir('tgBot'){
                     sh 'mvn package'
-                    sh 'cp -r /home/shusainov/dataCollector/config config'
+                    sh 'cp -r /home/shusainov/tgBot/config config'
                 }
             }
         }
