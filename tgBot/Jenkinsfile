@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    stages {
+        stage('build') {
+            steps {
+                cleanWs()
+                git branch: 'main', url: 'https://github.com/shusainov/pricer.git'
+                dir('tgBot'){
+                    sh 'mvn package'
+                    sh 'cp -r /home/shusainov/dataCollector/config config'
+                }
+            }
+        }
+        stage('image') {
+            steps{
+                script(){
+                    dir('tgBot'){
+                        def VERSION = readMavenPom().getVersion()
+                        echo "${VERSION}"
+                        sh "docker build --no-cache --tag localhost:tgBot --build-arg VERSION=${VERSION} ."
+                    }
+                }
+            }
+        }
+        stage('deploy') {
+            steps{
+                echo "deploying"
+                sh "docker rm --force tgBot"
+                script(){docker.image('localhost:tgBot').run('--name tgBot --restart=always')}
+            }
+        }
+    }
+}
