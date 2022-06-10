@@ -6,17 +6,13 @@ import com.google.gson.JsonParser;
 import com.shusainov.tgbot.models.Message;
 import com.shusainov.tgbot.models.Update;
 import com.shusainov.tgbot.utils.Config;
-import org.apache.hc.client5.http.classic.HttpClient;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
-import org.apache.hc.client5.http.fluent.Form;
 import org.apache.hc.client5.http.fluent.Request;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpResponse;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.apache.hc.core5.util.Timeout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -24,6 +20,7 @@ import java.util.List;
 
 
 public class TgAPI {
+    private Logger log = LoggerFactory.getLogger(TgAPI.class);
     private String token;
 
     public TgAPI(String token) {
@@ -32,18 +29,21 @@ public class TgAPI {
 
     public boolean checkMyStatus() {
         try {
+            log.info("Status checking started...");
             String request = Request.post(String.format(Config.get("URL"), token, "getMe"))
                     .connectTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
                     .responseTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
                     .execute()
                     .returnContent().toString();
 
-            JsonObject jsonObject =
+            JsonObject requestJson =
                     new JsonParser().parse(request).getAsJsonObject();
-            return jsonObject.get("ok").getAsBoolean();
 
+            log.info("Status checking end. Result:" + requestJson);
+
+            return requestJson.get("ok").getAsBoolean();
         } catch (IOException e) {
-            System.out.println(e);
+            log.error(e.toString());
             return false;
         }
     }
@@ -56,14 +56,14 @@ public class TgAPI {
                     .execute()
                     .returnContent().toString();
 
-            JsonObject jsonObject =
+            JsonObject requestJson =
                     new JsonParser().parse(request).getAsJsonObject();
             Gson gson = new Gson();
 
-            return gson.fromJson(jsonObject.get("result"), Update[].class);
+            return gson.fromJson(requestJson.get("result"), Update[].class);
 
         } catch (IOException e) {
-            System.out.println(e);
+            log.error("getUpdates():" + e.toString());
             return null;
         }
     }
@@ -80,36 +80,35 @@ public class TgAPI {
                     .execute()
                     .returnContent().toString();
 
-            JsonObject jsonObject =
+            JsonObject requestJson =
                     new JsonParser().parse(request).getAsJsonObject();
             Gson gson = new Gson();
-
-            return gson.fromJson(jsonObject.get("result"), Update[].class);
+            log.info("Get updates: " + request);
+            return gson.fromJson(requestJson.get("result"), Update[].class);
 
         } catch (IOException e) {
-            System.out.println(e);
+            log.error(e.toString());
             return null;
         }
     }
 
     public Message sendMessage(long chat_id, String text) {
-        String request = null;
         try {
             List<NameValuePair> params = new ArrayList<NameValuePair>(2);
             params.add(new BasicNameValuePair("chat_id", Long.toString(chat_id)));
             params.add(new BasicNameValuePair("text", text));
-            request = Request.post(String.format(Config.get("URL"), token, "sendMessage"))
-                    .bodyForm(params,Charset.forName("UTF-8"))
+            String request = Request.post(String.format(Config.get("URL"), token, "sendMessage"))
+                    .bodyForm(params, Charset.forName("UTF-8"))
                     .connectTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
                     .responseTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
                     .execute()
                     .returnContent().toString();
-            JsonObject jsonObject =
+            JsonObject requestJson =
                     new JsonParser().parse(request).getAsJsonObject();
             Gson gson = new Gson();
-            return gson.fromJson(jsonObject.get("result"), Message.class);
+            return gson.fromJson(requestJson.get("result"), Message.class);
         } catch (IOException e) {
-            System.out.println(e);
+            log.error("sendMessage():" + e.toString());
             return null;
         }
     }

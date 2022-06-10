@@ -14,7 +14,7 @@ import utils.Config;
 import java.io.FileReader;
 import java.io.Reader;
 
-public class Sender extends Thread {
+public class Sender implements Runnable {
     private static volatile int threadsCount = 0;
     private final JsonObject dataSet;
 
@@ -39,7 +39,8 @@ public class Sender extends Thread {
 
         JsonArray dataSets = getDataSet();
         for (JsonElement dataSet : dataSets) {
-            Thread thread = new Sender(dataSet.getAsJsonObject());
+            Sender sender = new Sender(dataSet.getAsJsonObject());
+            Thread thread = new Thread(sender);
             thread.start();
             Thread.sleep(1000);
             while (threadsCount >= Integer.valueOf(Config.get("THREAD_COUNT"))) {
@@ -90,8 +91,6 @@ public class Sender extends Thread {
                     .setQueryParam("token", Config.get("SERVER_TOKEN"));
             APIResponse response = page.request().post(Config.get("SERVER_URL"), rs);
             System.out.println(response.text());
-        } catch (Throwable e) {
-            System.out.println("Something wrong:" + e);
         } finally {
             threadsCount--;
         }
