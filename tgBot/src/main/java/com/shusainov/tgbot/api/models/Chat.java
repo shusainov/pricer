@@ -1,4 +1,4 @@
-package com.shusainov.tgbot.models;
+package com.shusainov.tgbot.api.models;
 
 import lombok.Data;
 

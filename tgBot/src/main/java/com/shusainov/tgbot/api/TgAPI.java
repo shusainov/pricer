@@ -1,11 +1,11 @@
-package com.shusainov.tgbot;
+package com.shusainov.tgbot.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.shusainov.tgbot.models.Message;
-import com.shusainov.tgbot.models.Update;
-import com.shusainov.tgbot.utils.Config;
+import com.shusainov.tgbot.Config;
+import com.shusainov.tgbot.api.models.Message;
+import com.shusainov.tgbot.api.models.Update;
 import org.apache.hc.client5.http.fluent.Request;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
@@ -30,9 +30,9 @@ public class TgAPI {
     public boolean checkMyStatus() {
         try {
             log.info("Status checking started...");
-            String request = Request.post(String.format(Config.get("URL"), token, "getMe"))
-                    .connectTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
-                    .responseTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
+            String request = Request.post(String.format("https://api.telegram.org/bot%s/%s", token, "getMe"))
+                    .connectTimeout(Timeout.ofSeconds(5))
+                    .responseTimeout(Timeout.ofSeconds(5))
                     .execute()
                     .returnContent().toString();
 
@@ -50,9 +50,9 @@ public class TgAPI {
 
     public Update[] getUpdates() {
         try {
-            String request = Request.post(String.format(Config.get("URL"), token, "getUpdates"))
-                    .connectTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
-                    .responseTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
+            String request = Request.post(String.format("https://api.telegram.org/bot%s/%s", token, "getUpdates"))
+                    .connectTimeout(Timeout.ofSeconds(5))
+                    .responseTimeout(Timeout.ofSeconds(5))
                     .execute()
                     .returnContent().toString();
 
@@ -73,10 +73,10 @@ public class TgAPI {
             List<NameValuePair> params = new ArrayList<NameValuePair>(2);
             params.add(new BasicNameValuePair("offset", String.valueOf(offset)));
 
-            String request = Request.post(String.format(Config.get("URL"), token, "getUpdates"))
+            String request = Request.post(String.format("https://api.telegram.org/bot%s/%s", token, "getUpdates"))
                     .bodyForm(params)
-                    .connectTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
-                    .responseTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
+                    .connectTimeout(Timeout.ofSeconds(5))
+                    .responseTimeout(Timeout.ofSeconds(5))
                     .execute()
                     .returnContent().toString();
 
@@ -97,10 +97,10 @@ public class TgAPI {
             List<NameValuePair> params = new ArrayList<NameValuePair>(2);
             params.add(new BasicNameValuePair("chat_id", Long.toString(chat_id)));
             params.add(new BasicNameValuePair("text", text));
-            String request = Request.post(String.format(Config.get("URL"), token, "sendMessage"))
+            String request = Request.post(String.format("https://api.telegram.org/bot%s/%s", token, "sendMessage"))
                     .bodyForm(params, Charset.forName("UTF-8"))
-                    .connectTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
-                    .responseTimeout(Timeout.ofSeconds(Integer.parseInt(Config.get("TIMEOUT"))))
+                    .connectTimeout(Timeout.ofSeconds(5))
+                    .responseTimeout(Timeout.ofSeconds(5))
                     .execute()
                     .returnContent().toString();
             JsonObject requestJson =
