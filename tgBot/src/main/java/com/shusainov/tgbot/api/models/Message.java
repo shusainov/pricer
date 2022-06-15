@@ -4,14 +4,14 @@ import lombok.Data;
 
 @Data
 public class Message {
-    int message_id;    //Integer	Уникальный идентификатор сообщения
+    private int message_id;    //Integer	Уникальный идентификатор сообщения
     //from	User	Опционально. Отправитель. Может быть пустым в каналах.
-    int date;       //Integer	Дата отправки сообщения (Unix time)
-    Chat chat;      //Chat	Диалог, в котором было отправлено сообщение
+    private int date;       //Integer	Дата отправки сообщения (Unix time)
+    private Chat chat;      //Chat	Диалог, в котором было отправлено сообщение
     //forward_from	User	Опционально. Для пересланных сообщений: отправитель оригинального сообщения
     //forward_date	Integer	Опционально. Для пересланных сообщений: дата отправки оригинального сообщения
     //reply_to_message	Message	Опционально. Для ответов: оригинальное сообщение. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
-    String text;    //String	Опционально. Для текстовых сообщений: текст сообщения, 0-4096 символов
+    private String text;    //String	Опционально. Для текстовых сообщений: текст сообщения, 0-4096 символов
     //entities	Массив из MessageEntity	Опционально. Для текстовых сообщений: особые сущности в тексте сообщения.
     //audio	Audio	Опционально. Информация об аудиофайле
     //document	Document	Опционально. Информация о файле

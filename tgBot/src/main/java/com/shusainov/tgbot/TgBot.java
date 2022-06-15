@@ -2,9 +2,9 @@ package com.shusainov.tgbot;
 
 
 import com.google.gson.JsonObject;
-import com.shusainov.tgbot.api.TgAPI;
 import com.shusainov.tgbot.api.methods.GetMe;
 import com.shusainov.tgbot.api.methods.GetUpdates;
+import com.shusainov.tgbot.api.methods.SendMessage;
 import com.shusainov.tgbot.db.StoreItemRepository;
 import com.shusainov.tgbot.db.models.StoreItem;
 import com.shusainov.tgbot.api.models.Update;
@@ -66,11 +66,8 @@ public class TgBot {
         if (!status || updates.size() < 1) return;
         Update update = updates.poll();
         if (update == null) return;
-
         long chatID = update.getMessage().getChat().getId();
-        System.out.println(chatID);
         String incomingText = update.getMessage().getText();
-        System.out.println(incomingText);
         String resultText = "Не понял тебя";
         //TODO здесь происходит обработка данных, надо бы как то улучшить. Может получится слишком сложный метод
         switch (incomingText) {
@@ -81,7 +78,7 @@ public class TgBot {
                 break;
             }
             default: {
-                //TODO нужно както ограничить выгрузку возвращает слишком много данных
+                //TODO нужно как то ограничить выгрузку возвращает слишком много данных
                 StoreItem storeItem = repository.searchLastByLike(incomingText).stream().findFirst().orElse(new StoreItem());
                 if (storeItem != null) {
                     String sendingTextFormat = "Магазин: %s Цена: %s id: %s\n %s";
@@ -89,9 +86,8 @@ public class TgBot {
                 }
             }
         }
-        TgAPI tgAPI = new TgAPI(config.token);
-        tgAPI.sendMessage(chatID, resultText);
-
+        SendMessage sendMessage = new SendMessage(config.token, config.connectionTimeout, chatID, resultText);
+        sendMessage.execute();
     }
 }
 

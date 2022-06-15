@@ -30,21 +30,17 @@ import java.util.stream.Collectors;
 
 @Component
 public abstract class Method {
-    @Autowired
-    Config config;
-
+    protected final Logger log = LoggerFactory.getLogger(Method.class);
+    private final String telegramURL = "https://api.telegram.org/bot%s/%s";
+    private String token;
+    private int connectionTimeout;
+    private String path;
+    protected List<NameValuePair> params = new ArrayList<>();
+    protected JsonObject requestJson = null;
     public Method(String token, int connectionTimeout) {
         this.token = token;
         this.connectionTimeout = connectionTimeout;
     }
-
-    private String token;
-    private int connectionTimeout;
-    private String telegramURL = "https://api.telegram.org/bot%s/%s";
-    private String path;
-    protected List<NameValuePair> params = new ArrayList<>();
-    protected Logger log = LoggerFactory.getLogger(Method.class);
-    protected JsonObject requestJson = null;
 
     public String getPath() {
         return path;
